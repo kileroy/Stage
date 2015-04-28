@@ -1,0 +1,9 @@
+twig:
+    form:
+        resources:
+            - 'AcmeTaskBundle:Form:fields.html.twig'
+framework:
+    templating:
+        form:
+            resources:
+                - 'AcmeProductBundle:Form'

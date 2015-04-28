@@ -1,0 +1,5 @@
+services:
+    acme_demo.form.type.product:
+        class: Acme\StoreBundle\Form\Type\ProductType
+        tags:
+            - { name: form.type, alias: product }

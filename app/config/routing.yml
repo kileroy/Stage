@@ -1,0 +1,78 @@
+#Surement des URL bien inutile
+acme_store:
+    resource: "@AcmeStoreBundle/Resources/config/routing.yml"
+    prefix:   /
+acme_hello:
+    resource: "@AcmeHelloBundle/Resources/config/routing.yml"
+    prefix:   /
+app:
+    resource: @AppBundle/Controller/
+    type:     annotation
+hello:
+    path:     /bienvenue
+    defaults: { _controller: AcmeHelloBundle:Hello:index }
+    
+#Url de régistration
+login:
+    pattern:   /login
+    defaults:  { _controller: AcmeStoreBundle:Security:login }
+register:
+    pattern:   /inscrire
+    defaults:  { _controller: AcmeStoreBundle:Security:register }
+login_check:
+    pattern:   /login_check
+logout:
+    pattern:   /logout
+#Url d'ajout
+reservL:
+    path:      /reserve/local
+    defaults:  { _controller: AcmeStoreBundle:Default:reservL} 
+reservM:
+    path:      /reserve/materiel
+    defaults:  { _controller: AcmeStoreBundle:Default:reservM}      
+ajoutm:
+    path:      /ajout/materiel
+    defaults:  { _controller: AcmeStoreBundle:Default:newM}
+ajoutl:
+    path:      /ajout/local
+    defaults:  { _controller: AcmeStoreBundle:Default:newL}
+#Url de Liste
+listL:
+    path:      /liste/local
+    defaults:  { _controller: AcmeStoreBundle:Default:local}  
+listM:
+    path:      /liste/materiel
+    defaults:  { _controller: AcmeStoreBundle:Default:materiel}  
+#Url D'utilisateur
+user:
+    path:      /liste/user
+    defaults:  { _controller: AcmeStoreBundle:Default:user}  
+profil:
+    path:      /profil/{id}
+    defaults:  { _controller: AcmeStoreBundle:Default:profil} 
+#URL pour l'Horaire semaine par semaine
+horraire:
+    path:      /horaire/{id}
+    defaults:  { _controller: AcmeStoreBundle:Default:horraire, id:1}  
+#Url de suppression
+supprimer:
+    ## juste pour être sur que utilisateur supprime rien avec l'url
+    path:      /supp/{supp}/{id}
+    defaults:  { _controller: AcmeStoreBundle:Default:supId}  
+drop:
+    path:      /reset/drop/{supp}
+    defaults:  { _controller: AcmeStoreBundle:Default:drop} 
+reset:
+    path:      /reset
+    defaults:  { _controller: AcmeStoreBundle:Default:resetA} 
+#Url d'impression de l'horaire complet
+imprime:
+    path:      /imp/{imp}
+    defaults:  { _controller: AcmeStoreBundle:Default:imp} 
+#URL pour les premier jour de semaine de session
+semaine:
+    path:      /semaine
+    defaults:  { _controller: AcmeStoreBundle:Default:semaine} 
+changer:
+    path:      /semaine/{id}
+    defaults:  { _controller: AcmeStoreBundle:Default:changer} 

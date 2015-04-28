@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Locaux{% endblock %}
+
+{% block content %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('ajoutl') }}">+ Ajouter</a>
+    {% endif %}
+    <br><div id="titre">Liste des Locaux disponible à la réservation.</div>
+    <br><br>{# On montre ici tout les Locaux présent dans la BD #}
+    {% for lo in show%}{# Et les Admin on le pouvoir d'en ajouter #}
+        <li>¬ Local {{lo.num}} {% if is_granted('ROLE_ADMIN') %} -
+                    <a href="{{ path('supprimer', {'supp': 'local', 'id': lo.id}) }}"
+                       onclick="return confirm('Attention, vous allez supprimer le Local {{lo.num}}.' );">Supprimer</a><br>
+        {% else %}<br>{% endif %}{{lo.description}}</li>
+    {% endfor %}
+{% endblock %}

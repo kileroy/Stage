@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Semaines{% endblock %}
+
+{% block content %}
+    <br><div id="titre">Lundi des semaines d'école</div>
+    <br><br>
+    {% for lo in sem%}
+        {# On montre les 18 semaines, par précaution des congé etc, 
+        pour que les Admin puisse les changer a chaque session #}
+        <li>¬ Semaine {{lo.id}} : {{lo.jour|date('d-m-Y')}} {% if is_granted('ROLE_ADMIN') %} -
+                    <a href="{{ path('changer', {'id': lo.id}) }}">Modifier</a><br>
+        {% endif %}</li>
+    {% endfor %}
+{% endblock %}

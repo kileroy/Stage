@@ -1,0 +1,11 @@
+## YAML Template.
+---
+Acme\StoreBundle\Entity\ReserveL:
+    properties:
+        date:
+            - Acme\StoreBundle\Validator\Constraints\Today: ~
+Acme\StoreBundle\Entity\ReserveM:
+    properties:
+        date:
+            - Acme\StoreBundle\Validator\Constraints\Today: ~
+            

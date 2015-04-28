@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+{% block title %}Login{% endblock %}
+{% block content %}{# Si un utilisateur est déjà conecter et qu'il vien sur le lien, on le lui signale #}
+{%if is_granted('IS_AUTHENTICATED_FULLY')%}
+    Vous êtes déjà connecter au site <strong>{{ app.user.username }}</strong> !<br>
+    Si vous voulez vous déconnectez, <a href="{{ path('logout') }}">cliquez ici dans ce cas.</a><br>
+    Si non retourné en arrière.
+{%else%}
+    {% if error %}
+        <div><font color="red"><strong>{{ error.message }}</strong></font></div>
+    {% else %}
+        <br>
+    {% endif %}
+        <br>
+        <form action="{{ path('login_check') }}" method="post">
+        <label for="username">Pseudonym :</label>
+        <input type="text" id="username" name="_username" value="{{ last_username }}" />
+
+        <label for="password">Mot de passe :</label>
+        <input type="password" id="password" name="_password" /><br>
+        {#
+            Si vous voulez contrôler l'URL vers laquelle l'utilisateur est redirigé en cas de succès
+            (plus de détails ci-dessous)
+            <input type="hidden" name="_target_path" value="/account" />
+        #}
+        <input type="checkbox" id="remember_me" name="_remember_me" checked /> 
+        <label for="remember_me">Se souvenir de moi!</label>
+        <br><br>
+        <button type="submit">Connection</button>
+        </form>
+{% endif %}
+{% endblock %}

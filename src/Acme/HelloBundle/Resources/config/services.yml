@@ -1,0 +1,11 @@
+parameters:
+    my_mailer.class:      Acme\HelloBundle\Mailer
+    my_mailer.transport:  sendmail
+
+services:
+    my_mailer:
+        class:        "%my_mailer.class%"
+        arguments:    ["%my_mailer.transport%"]
+    #newsletter_manager:
+     #   class:     "%newsletter_manager.class%"
+      #  arguments: [@mailer, @templating]

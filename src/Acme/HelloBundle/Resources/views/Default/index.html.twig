@@ -1,0 +1,18 @@
+ {% extends '::base.html.twig' %}
+{% block title %}Bienvenue!{% endblock %}
+ {% block content %}<br><br>
+    {% if is_granted('ROLE_USER')%}
+     Vous voulez qu'on vous souhaite la bienvenue encore une fois <strong>{{ app.user.username }}</strong>?<br>
+     Eh bien Re-bienvenue sur le site! <br><br>...<br><br>
+     Mais ne préfériez-vous pas commencer a l'utiliser à la place de joué avec le URL?
+    {% else %}
+     Bienvenue sur le site de réservation ! <br>
+     Vous devez attendre que l'administrateur vous confirme en tant qu'utilisateur avant de pouvoir réserver.<br><br>
+     En attendant vous pouvez toujours aller
+        {% if is_granted('ROLE_NEW')%}
+         explorer un peu l'interface qui vous attend <strong>{{ app.user.username }}</strong>. 
+        {% else %}
+         vous connectez et explorer un peu l'interface qui vous attend.
+        {% endif %}
+    {% endif %}
+ {% endblock %}

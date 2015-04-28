@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Utilisateurs{% endblock %}
+
+{% block content %}
+    {# On montre tout les utilisateur enregistré sur le Site, et montre aux admin 
+       qui n'est pas valider encore pour facilité leur travaille #}
+    <br><div id="titre">Liste des Utilisateurs.</div>
+    <br><br>
+    {% for lo in show%}
+        <li>¬ {{lo.username}} - <a href="/Stage/web/app_dev.php/profil/{{lo.id}}">Profil</a> {% if is_granted('ROLE_ADMIN') %}
+        {% if lo.role == "ROLE_NEW" %} <font size="1" color=red>[Non Validé]</font>{% endif %} - 
+        <a href="{{ path('supprimer', { 'supp': 'user', 'id': lo.id }) }}"  onclick="return confirm('Attention, vous allez supprimer {{lo.username}}.' );">Supprimer</a>
+    {% endif %}
+    {% endfor %}
+{% endblock %}

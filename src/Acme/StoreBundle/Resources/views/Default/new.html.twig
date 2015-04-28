@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajout{% endblock %}
+{% block profil %}{% endblock %}
+
+    {% block stylesheets %}
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    
+    {% endblock %}
+
+{% block content %}
+    <br>
+    Veuillez remplir les champs demandés.<br>
+    {% if err == "" %}<br>{% endif %}
+    <strong><font color=darkred>{{err}}</font></strong>
+    {% form_theme form 'AcmeStoreBundle:Form:fields.html.twig' %}
+    {{ form(form) }}<br>
+    {#<p>Date: <input type="text" id="datepicker"></p>#}
+    
+    {% block javascripts %}
+        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <script src="{{ asset('bundles/Store/js/datepicker-fr-CA.js')}}"></script>
+        <script src="datepicker-fr-CA.js"></script>
+        <script>
+            {#Pour les Réservation#}
+        $("form input.date").datepicker({
+            minDate: 0, 
+            beforeShowDay: $.datepicker.noWeekends,
+            showOn: "button",
+            buttonImage: "images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Calendrier",
+        }).attr("readonly","readonly"); 
+            {#Pour les changement de lundi#}
+        $("form input.lundi").datepicker({
+            beforeShowDay: function(date) {
+                var day = date.getDay();
+                return [(day == 1 )];
+            },
+            showOn: "button",
+            buttonImage: "images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Calendrier",
+        }).attr("readonly","readonly"); 
+        </script>
+        {# Pop-up de calendrier
+        
+        <script>
+        $.datepicker.setDefaults( $.datepicker.formatDate( "dd-mm-yy" ));
+        
+        
+        $(function() {
+            $( "#datepicker" ).datepicker( { 
+            minDate: 0, 
+            beforeShowDay: $.datepicker.noWeekends,
+            showOn: "button",
+            buttonImage: "images/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Calendrier",
+            });
+        });
+        </script> #}
+    {% endblock %}
+    
+{% endblock %}

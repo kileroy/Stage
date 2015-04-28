@@ -1,0 +1,10 @@
+ {% extends '::base.html.twig' %}
+
+ {% block body %}
+     Salutation {{ name }}! <br>
+     Regarde, je peux écrire en <font color={{color}}>en {{color}}</font> !!
+     <br><br>{# Ça marche comme ça! #}
+     Et faire un lien <a href="{{ path('hello', { 'name': 'cliqueur' }) }}">
+  juste ici!
+</a>
+ {% endblock %}

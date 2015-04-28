@@ -1,0 +1,81 @@
+# you can read more about security in the related section of the documentation
+# http://symfony.com/doc/current/book/security.html
+security:
+    # http://symfony.com/doc/current/book/security.html#encoding-the-user-s-password
+    encoders:
+        Symfony\Component\Security\Core\User\User: 
+            algorithm:   sha1
+            iterations: 1
+            encode_as_base64: false
+        Acme\StoreBundle\Entity\User: 
+            algorithm:   sha1
+            iterations: 1
+            encode_as_base64: false
+            #sha512
+
+    # http://symfony.com/doc/current/book/security.html#hierarchical-roles
+    role_hierarchy:
+        ROLE_USER:        ROLE_NEW
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER: [ROLE_NEW, ROLE_USER, ROLE_ADMIN, ROLE_SWITCH]
+
+    # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
+    providers:
+        chain_provider:
+            chain :
+                providers: [in_memory, user_db]
+        in_memory:
+            memory:
+                users:
+                    Sadmin: { password: 908b2d7ba7ddc1699d077b310eac1c9a280bb54c, roles: [ 'ROLE_SUPER' ] }
+                    # pas = Passdmin
+                    #IS_AUTHENTICATED_FULLY = conecter
+        user_db:
+            entity: { class: Acme\StoreBundle\Entity\User, property: username }
+
+    # the main part of the security, where you can set up firewalls
+    # for specific sections of your app
+    firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        # the login page has to be accessible for everybody
+        demo_login:
+            pattern:  ^/demo/secured/login$
+            security: false
+
+        # secures part of the application
+        secured_area:
+            pattern:    ^/
+            # it's important to notice that in this case _demo_security_check and _demo_login
+            # are route names and that they are specified in the AcmeDemoBundle
+            form_login:
+                login_path:  /login
+                check_path:  /login_check
+            logout:
+                path:   /logout
+                target: /
+            anonymous: ~
+            http_basic:
+                realm: "Secured Demo Area"
+        
+            #pour anti anonyme
+           #    login_firewall:
+            #       pattern:    ^/login$
+             #      anonymous:  ~
+              # secured_area:
+               #    pattern:    ^/
+                #   form_login: ~
+                
+    # with these settings you can restrict or allow access for different parts
+    # of your application based on roles, ip, host or methods
+    # http://symfony.com/doc/current/cookbook/security/access_control.html
+    access_control:
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        # , requires_channel: https 
+        - { path: ^/reset, roles: ROLE_SUPER }
+        - { path: ^/ajout, roles: ROLE_ADMIN }
+        - { path: ^/semaine, roles: ROLE_ADMIN }
+        - { path: ^/reserve, roles: ROLE_USER }
+        - { path: ^/supp, roles: ROLE_USER }

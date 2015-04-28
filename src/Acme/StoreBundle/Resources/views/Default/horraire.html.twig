@@ -1,0 +1,284 @@
+{% extends 'base.html.twig' %}
+{#Marche bien a cette date si là là#}
+{% block title %}Horaire{% endblock %}
+{# Je souhaite bonne chance à mes "prédécéseur" pour décéler se remut-méninge de "if", 
+   même moi je ne m'y retrouve plus vraiment... Mais ça marche. #}
+{% block content %}
+    {#<br><br><br><br>#}
+    <div id="titre">Semaine {{id}} du {{semaine[id].jour|date('d')}} {{mois[semaine[id].jour|date('n')]}}</div> <br><br>{#<br><br><br>#}
+    <u><div id="stitre">Liste des Réservation pour les Locaux</div></u> 
+    <a href="{{ path('imprime', {'imp': 'local' ,'id': id}) }}">Version Imprimable</a><br>
+    <table border="1">
+        {# D'abord on met des varialbe vide. 
+        Elles servent principalement a vérifié si un objet est un double ou non comme leur nom l'indique.
+        "nb" [nombre] et "nbf"[nombre Final] sont les compteur de combien, dans la semaine courante, il y a d'objet.#}
+        {%set double = 'nul'%}{%set doubleDate = 'nul'%}{%set mm = 0%}{%set nb = 0%}
+        {%set nbf = 0%}{%set check =0%}{%set reserve = {(nb):double}%}
+        <tr><td></td>
+            {# On affiche tout les locaux #}
+        {% for lo in locaux %} 
+            {# Enlever le commentaire et remplacez locaux pour local pour afficher que l'utile, Ajouté aussi "local" : lo.[Ici].num
+            if lo.local.num != double and lo.date|date('Y-m-d') >= semaine[id].jour|date('Y-m-d') and lo.date|date('Y-m-d') < semaine[id+1].jour|date('Y-m-d') #}
+            {%set nb = nb +1%}
+                <td><strong>{{lo.num}}</strong></td>
+                {# Tu place les variable dans les double si tu veux que l'utiles #}
+            {#set double = lo.num%}{%set doubleDate = lo.date|date('Y-m-d')#}
+            {%set reserve = reserve + {(nb): lo.num}%}
+        {% endfor %}
+            {%set nbf = nb%}{%set double = 'nul'%}{%set doubleDate = 'nul'%}
+            {%set reserve = reserve + {(nb+1): 'Vide Secure'}%}
+        </tr>
+        <tr><td><strong>Lundi</strong><br>
+            {{semaine[id].jour|date('d')}} {{mois[semaine[id].jour|date('n')]}}</td>
+            {% for lo in local if lo.date|date('Y-m-d') >= semaine[id].jour|date('Y-m-d') and lo.date|date('Y-m-d') < semaine[id+1].jour|date('Y-m-d')%} 
+                {# Si c'est le tout premier, mettre le double, pour ne pas qu'il soti le dernier de la semaien précédente #}
+                {% if check==0 and nb==nbf %}{%set double =lo.local.num%}{%set check=1%}{% endif %}
+                {# Si c'est Lundi ; Jusqu'à se qu'on est vérifier chaque réservation et que la varialbe de "check" n'est aps initialisé. #}
+                {% if lo.date|date('D') == 'Mon' %}{% for rId in (nbf-nb+1)..(locaux|length) if check!=2%}
+                    {# Si ce n'est pas le même et qu'il n'as pas été enregistré une fois, on ferme la case #}
+                    {% if mm > 0 and lo.local.num != reserve[rId] %}</td>{%set mm=0%}{% endif %}
+                    {# Si le local est égale a celui de la case mit dans le tableau de doublure et qu'il n'y apas eu d'enregistrement, on ajoute. #}
+                    {% if lo.local.num == reserve[rId] and mm ==0  %}
+                        <td><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u> <br>
+                        {{lo.user.username}} 
+                        {% set mm = mm + 1%} {% set nb = nb - 1 %} 
+                        {%set double = lo.local.num%}{%set check=2%}
+                        {# Sinon, si est un double, et qu'il a eu une enregistrement, on ajoute, mais dans la même celule #}
+                    {% elseif lo.local.num == double and mm > 0 %}
+                        <br><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u><br>
+                        {{lo.user.username}} 
+                        {%set double = lo.local.num%}{%set check=2%}
+                    {% endif %}
+                    {# S'il y a eu aucun enregistrement, on met une celule vide #}
+                {% if check != 2 %}<td></td>{% set nb = nb - 1 %}{% endif %}
+                {% endfor %}{% endif %}{%set check=1%}
+            {% endfor %}{%set check=0%}{%set mm=0%}
+            {# S'il y a encore des celule vide de pas mise, on le sais en vérifiant si nb a pas ateint 0 #}
+            {% if nb > 0  %}{%for nb in 1..nb%}<td></td>{% endfor %}{% endif %}{%set nb = nbf%}
+        </tr>
+        {#
+        Et c'est ainsi pour tout les jours, ainsi que les fichier d'impression impMat et impLoc
+        #}
+        <tr><td><strong>Mardi</strong><br>
+            {{semaine[id].jour|date_modify('+1 day')|date('d')}} {{mois[semaine[id].jour|date_modify('+1 day')|date('n')]}}</td>
+            {% for lo in local if lo.date|date('Y-m-d') >= semaine[id].jour|date('Y-m-d') and lo.date|date('Y-m-d') < semaine[id+1].jour|date('Y-m-d')%} 
+                {% if check==0 and nb==nbf%}{%set double =lo.local.num %}{%set check=1%}{% endif %}
+                {% if lo.date|date('D') == 'Tue' %}{% for rId in (nbf-nb+1)..(locaux|length) if check!=2%}
+                    {% if mm > 0 and lo.local.num != double %}</td>{%set mm=0%}{% endif %}
+                    {% if lo.local.num == reserve[rId] and mm ==0  %}
+                        <td><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u> <br>
+                        {{lo.user.username}} 
+                        {% set mm = mm + 1%} {% set nb = nb - 1 %} 
+                        {%set double = lo.local.num%}{%set check=2%}
+                    {% elseif lo.local.num == double and mm > 0 %}
+                        <br><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u><br>
+                        {{lo.user.username}} 
+                        {%set double = lo.local.num%}{%set check=2%}
+                    {% endif %}
+                {% if check != 2 %}<td></td>{% set nb = nb - 1 %}{% endif %}
+                {% endfor %}{% endif %}{%set check=1%}
+            {% endfor %}{%set check=0%}{%set mm=0%}
+            {% if nb > 0  %}{%for nb in 1..nb%}<td></td>{% endfor %}{% endif %}{%set nb = nbf%}
+        </tr>
+        <tr><td><strong>Mercredi</strong><br>
+            {{semaine[id].jour|date_modify('+2 day')|date('d')}} {{mois[semaine[id].jour|date_modify('+2 day')|date('n')]}}</td>
+            {% for lo in local if lo.date|date('Y-m-d') >= semaine[id].jour|date('Y-m-d') and lo.date|date('Y-m-d') < semaine[id+1].jour|date('Y-m-d')%}
+                {% if check==0 and nb==nbf%}{%set double =lo.local.num %}{%set check=1%}{% endif %}
+                {% if lo.date|date('D') == 'Wed' %}{% for rId in (nbf-nb+1)..(locaux|length) if check!=2%}
+                    {% if mm > 0 and lo.local.num != double %}</td>{%set mm=0%}{% endif %}
+                    {% if lo.local.num == reserve[rId] and mm ==0  %}
+                        <td><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u> <br>
+                        {{lo.user.username}} 
+                        {% set mm = mm + 1%} {% set nb = nb - 1 %} 
+                        {%set double = lo.local.num%}{%set check=2%}
+                    {% elseif lo.local.num == double and mm > 0 %}
+                        <br><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u><br>
+                        {{lo.user.username}} 
+                        {%set double = lo.local.num%}{%set check=2%}
+                    {% endif %}
+                {% if check != 2 %}<td></td>{% set nb = nb - 1 %}{% endif %}
+                {% endfor %}{% endif %}{%set check=1%}
+            {% endfor %}{%set check=0%}{%set mm=0%}
+            {% if nb > 0  %}{%for nb in 1..nb%}<td></td>{% endfor %}{% endif %}{%set nb = nbf%}
+        </tr>
+        <tr><td><strong>Jeudi</strong><br>
+            {{semaine[id].jour|date_modify('+3 day')|date('d')}} {{mois[ semaine[id].jour|date_modify('+3 day')|date('n') ]}}</td>
+            {% for lo in local if lo.date|date('Y-m-d') >= semaine[id].jour|date('Y-m-d') and lo.date|date('Y-m-d') < semaine[id+1].jour|date('Y-m-d')%} 
+                {% if check==0 and nb==nbf%}{%set double =lo.local.num %}{%set check=1%}{% endif %}
+                {% if lo.date|date('D') == 'Thu' %}{% for rId in (nbf-nb+1)..(locaux|length) if check!=2%}
+                    {% if mm > 0 and lo.local.num != double %}</td>{%set mm=0%}{% endif %}
+                    {% if lo.local.num == reserve[rId] and mm ==0  %}
+                        <td><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u> <br>
+                        {{lo.user.username}} 
+                        {% set mm = mm + 1%} {% set nb = nb - 1 %} 
+                        {%set double = lo.local.num%}{%set check=2%}
+                    {% elseif lo.local.num == double and mm > 0 %}
+                        <br><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u><br>
+                        {{lo.user.username}} 
+                        {%set double = lo.local.num%}{%set check=2%}
+                    {% endif %}
+                {% if check != 2 %}<td></td>{% set nb = nb - 1 %}{% endif %}
+                {% endfor %}{% endif %}{%set check=1%}
+            {% endfor %}{%set check=0%}{%set mm=0%}
+            {% if nb > 0  %}{%for nb in 1..nb%}<td></td>{% endfor %}{% endif %}{%set nb = nbf%}
+        </tr>
+        <tr><td><strong>Vendredi</strong><br>
+            {{semaine[id].jour|date_modify('+4 day')|date('d')}} {{mois[semaine[id].jour|date_modify('+4 day')|date('n')]}}</td>
+            {% for lo in local if lo.date|date('Y-m-d') >= semaine[id].jour|date('Y-m-d') and lo.date|date('Y-m-d') < semaine[id+1].jour|date('Y-m-d') %}
+                {% if check==0 %}{%set double =lo.local.num %}{%set check=1%}{% endif %}
+                {% if lo.date|date('D') == 'Fri' %}{% for rId in (nbf-nb+1)..(locaux|length) if check!=2%}
+                    {% if mm > 0 and lo.local.num != double %}</td>{%set mm=0%}{% endif %}
+                    {% if lo.local.num == reserve[rId] and mm ==0  %}
+                        <td><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u> <br>
+                        {{lo.user.username}} 
+                        {% set mm = mm + 1%} {% set nb = nb - 1 %} 
+                        {%set double = lo.local.num%}{%set check=2%}
+                    {% elseif lo.local.num == double and mm > 0 %}
+                        <br><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u><br>
+                        {{lo.user.username}} 
+                        {%set double = lo.local.num%}{%set check=2%}
+                    {% endif %}
+                {% if check != 2 %}<td></td>{% set nb = nb - 1 %}{% endif %}
+                {% endfor %}{% endif %}{%set check=1%}
+            {% endfor %}{%set check=0%}{%set mm=0%}
+            {% if nb > 0  %}{%for nb in 1..nb%}<td></td>{% endfor %}{% endif %}{%set nb = nbf%}
+        </tr>
+    </table>
+            
+    <br><br><u><div id="stitre">Liste des Réservation pour les Matériaux</div></u> 
+    <a href="{{ path('imprime', {'imp': 'materiel' ,'id': id}) }}">Version Imprimable</a><br>
+    <table border="1">
+        {%set double = 'nul'%}{%set doubleDate = 'nul'%}{%set mm = 0%}{%set nb = 0%}
+        {%set nbf = 0%}{%set check =0%}{%set reserve = {(nb):double}%}
+        <tr><td></td>
+        {% for lo in materiaux  %} {# Même que pour les Locaux mais materiel à la palce de local.
+            if lo.materiel.nom != double and lo.date|date('Y-m-d') >= semaine[id].jour|date('Y-m-d') and lo.date|date('Y-m-d') < semaine[id+1].jour|date('Y-m-d') #}
+            {%set nb = nb +1%}
+                <td><strong>{{lo.nom}}</strong></td>
+            {#set double = lo.materiel.nom%}{%set doubleDate = lo.date|date('Y-m-d')#}
+            {%set reserve = reserve + {(nb): lo.nom}%}
+        {% endfor %}
+            {%set nbf = nb%}{%set double = 'nul'%}{%set doubleDate = 'nul'%}
+            {%set reserve = reserve + {(nb+1): 'Vide Secure'}%}
+        </tr>
+        <tr><td><strong>Lundi</strong><br>
+            {{semaine[id].jour|date('d')}} {{mois[semaine[id].jour|date('n')]}}</td>
+            {% for lo in materiel if lo.date|date('Y-m-d') >= semaine[id].jour|date('Y-m-d') and lo.date|date('Y-m-d') < semaine[id].jour|date_modify('+7 days')|date('Y-m-d')%} 
+                {% if check==0 and nb==nbf %}{%set double =lo.materiel.nom%}{%set check=1%}{% endif %}
+                {% if lo.date|date('D') == 'Mon' %}{% for rId in (nbf-nb+1)..(materiaux|length) if check!=2%}
+                    {% if mm > 0 and lo.materiel.nom != double %}</td>{%set mm=0%}{% endif %}
+                    {% if lo.materiel.nom == reserve[rId] and mm ==0 %}
+                        <td><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u> <br>
+                        {{lo.user.username}}
+                        {% set mm = mm + 1%} {% set nb = nb - 1 %} 
+                        {%set double = lo.materiel.nom%}{%set check=2%}
+                    {% elseif lo.materiel.nom == double and mm > 0 %}
+                        <br><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u><br>
+                        {{lo.user.username}}
+                        {%set double = lo.materiel.nom%}{%set check=2%}
+                    {% endif %}
+                {% if check != 2 %}<td></td>{% set nb = nb - 1 %}{% endif %}
+                {% endfor %}{% endif %}{%set check=1%}
+            {% endfor %}{%set check=0%}{%set mm=0%}
+            {% if nb > 0  %}{%for nb in 1..nb%}<td></td>{% endfor %}{% endif %}{%set nb = nbf%}
+        </tr>
+        <tr><td><strong>Mardi</strong><br>
+            {{semaine[id].jour|date_modify('+1 day')|date('d')}} {{mois[semaine[id].jour|date_modify('+1 day')|date('n')]}}</td>
+            {% for lo in materiel if lo.date|date('Y-m-d') >= semaine[id].jour|date('Y-m-d') and lo.date|date('Y-m-d') < semaine[id+1].jour|date('Y-m-d')%} 
+                {% if check==0 and nb==nbf%}{%set double =lo.materiel.nom %}{%set check=1%}{% endif %}
+                {% if lo.date|date('D') == 'Tue' %}{% for rId in (nbf-nb+1)..(materiaux|length) if check!=2%}
+                    {% if mm > 0 and lo.materiel.nom != double %}</td>{%set mm=0%}{% endif %}
+                    {% if lo.materiel.nom == reserve[rId] and mm ==0  %}
+                        <td><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u> <br>
+                        {{lo.user.username}} 
+                        {% set mm = mm + 1%} {% set nb = nb - 1 %} 
+                        {%set double = lo.materiel.nom%}{%set check=2%}
+                    {% elseif lo.materiel.nom == double and mm > 0 %}
+                        <br><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u><br>
+                        {{lo.user.username}} 
+                        {%set double = lo.materiel.nom%}{%set check=2%}
+                    {% endif %}
+                {% if check != 2 %}<td></td>{% set nb = nb - 1 %}{% endif %}
+                {% endfor %}{% endif %}{%set check=1%}
+            {% endfor %}{%set check=0%}{%set mm=0%}
+            {% if nb > 0  %}{%for nb in 1..nb%}<td></td>{% endfor %}{% endif %}{%set nb = nbf%}
+        </tr>
+        <tr><td><strong>Mercredi</strong><br>
+            {{semaine[id].jour|date_modify('+2 day')|date('d')}} {{mois[semaine[id].jour|date_modify('+2 day')|date('n')]}}</td>
+            {% for lo in materiel if lo.date|date('Y-m-d') >= semaine[id].jour|date('Y-m-d') and lo.date|date('Y-m-d') < semaine[id+1].jour|date('Y-m-d')%}
+                {% if check==0 and nb==nbf%}{%set double =lo.materiel.nom %}{%set check=1%}{% endif %}
+                {% if lo.date|date('D') == 'Wed' %}{% for rId in (nbf-nb+1)..(materiaux|length) if check!=2%}
+                    {% if mm > 0 and lo.materiel.nom != double %}</td>{%set mm=0%}{% endif %}
+                    {% if lo.materiel.nom == reserve[rId] and mm ==0  %}
+                        <td><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u> <br>
+                        {{lo.user.username}} 
+                        {% set mm = mm + 1%} {% set nb = nb - 1 %} 
+                        {%set double = lo.materiel.nom%}{%set check=2%}
+                    {% elseif lo.materiel.nom == double and mm > 0 %}
+                        <br><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u><br>
+                        {{lo.user.username}} 
+                        {%set double = lo.materiel.nom%}{%set check=2%}
+                    {% endif %}
+                {% if check != 2 %}<td></td>{% set nb = nb - 1 %}{% endif %}
+                {% endfor %}{% endif %}{%set check=1%}
+            {% endfor %}{%set check=0%}{%set mm=0%}
+            {% if nb > 0  %}{%for nb in 1..nb%}<td></td>{% endfor %}{% endif %}{%set nb = nbf%}
+        </tr>
+        <tr><td><strong>Jeudi</strong><br>
+            {{semaine[id].jour|date_modify('+3 day')|date('d')}} {{mois[ semaine[id].jour|date_modify('+3 day')|date('n') ]}}</td>
+            {% for lo in materiel if lo.date|date('Y-m-d') >= semaine[id].jour|date('Y-m-d') and lo.date|date('Y-m-d') < semaine[id+1].jour|date('Y-m-d')%} 
+                {% if check==0 and nb==nbf%}{%set double =lo.materiel.nom %}{%set check=1%}{% endif %}
+                {% if lo.date|date('D') == 'Thu' %}{% for rId in (nbf-nb+1)..(materiaux|length) if check!=2%}
+                    {% if mm > 0 and lo.materiel.nom != double %}</td>{%set mm=0%}{% endif %}
+                    {% if lo.materiel.nom == reserve[rId] and mm ==0  %}
+                        <td><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u> <br>
+                        {{lo.user.username}} 
+                        {% set mm = mm + 1%} {% set nb = nb - 1 %} 
+                        {%set double = lo.materiel.nom%}{%set check=2%}
+                    {% elseif lo.materiel.nom == double and mm > 0 %}
+                        <br><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u><br>
+                        {{lo.user.username}} 
+                        {%set double = lo.materiel.nom%}{%set check=2%}
+                    {% endif %}
+                {% if check != 2 %}<td></td>{% set nb = nb - 1 %}{% endif %}
+                {% endfor %}{% endif %}{%set check=1%}
+            {% endfor %}{%set check=0%}{%set mm=0%}
+            {% if nb > 0  %}{%for nb in 1..nb%}<td></td>{% endfor %}{% endif %}{%set nb = nbf%}
+        </tr>
+        <tr><td><strong>Vendredi</strong><br>
+            {{semaine[id].jour|date_modify('+4 day')|date('d')}} {{mois[semaine[id].jour|date_modify('+4 day')|date('n')]}}</td>
+            {% for lo in materiel if lo.date|date('Y-m-d') >= semaine[id].jour|date('Y-m-d') and lo.date|date('Y-m-d') < semaine[id+1].jour|date('Y-m-d') %}
+                {% if check==0 %}{%set double =lo.materiel.nom %}{%set check=1%}{% endif %}
+                {% if lo.date|date('D') == 'Fri' %}{% for rId in (nbf-nb+1)..(materiaux|length) if check!=2%}
+                    {% if mm > 0 and lo.materiel.nom != double %}</td>{%set mm=0%}{% endif %}
+                    {% if lo.materiel.nom == reserve[rId] and mm ==0  %}
+                        <td><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u> <br>
+                        {{lo.user.username}} 
+                        {% set mm = mm + 1%} {% set nb = nb - 1 %} 
+                        {%set double = lo.materiel.nom%}{%set check=2%}
+                    {% elseif lo.materiel.nom == double and mm > 0 %}
+                        <br><u>{{debut[lo.perioded]}} à {{fin[lo.periodef]}}</u><br>
+                        {{lo.user.username}} 
+                        {%set double = lo.materiel.nom%}{%set check=2%}
+                    {% endif %}
+                {% if check != 2 %}<td></td>{% set nb = nb - 1 %}{% endif %}
+                {% endfor %}{% endif %}{%set check=1%}
+            {% endfor %}{%set check=0%}{%set mm=0%}
+            {% if nb > 0  %}{%for nb in 1..nb%}<td></td>{% endfor %}{% endif %}{%set nb = nbf%}
+        </tr>
+    </table>
+            
+    <center>
+        {% if id-4 >= 1 %}<a href="{{ path('horraire', {'id': 1}) }}" title="Première Page"><<</a>-<a href="{{ path('horraire', {'id': id-1}) }}" title="Précédent"><</a>- ... , {% endif %}
+        {% if id-3 >= 1 %}<a href="{{ path('horraire', {'id': id-3}) }}">{{id-3}}</a> ,{% endif %} 
+        {% if id-2 >= 1 %}<a href="{{ path('horraire', {'id': id-2}) }}">{{id-2}}</a> ,{% endif %} 
+        {% if id-1 >= 1 %}<a href="{{ path('horraire', {'id': id-1}) }}">{{id-1}}</a> ,{% endif %} 
+        <strong>{{id}}</strong>
+        {% if id+1 <= 16 %}, <a href="{{ path('horraire', {'id': id+1}) }}">{{id+1}}</a>{% endif %} 
+        {% if id+2 <= 16 %}, <a href="{{ path('horraire', {'id': id+2}) }}">{{id+2}}</a>{% endif %}
+        {% if id+3 <= 16 %}, <a href="{{ path('horraire', {'id': id+3}) }}">{{id+3}}</a>{% endif %}
+        {% if id+4 <= 17 %}, ... -<a href="{{ path('horraire', {'id': id+1}) }}" title="Prochaine Page">></a>-<a href="{{ path('horraire', {'id': 17}) }}" title="Dernière Page">>></a>{% endif %}
+    </center>
+{% endblock %}
+
+

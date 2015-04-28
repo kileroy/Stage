@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{show.username}}{% endblock %}
+
+{% block content %}
+    {# On met le id a rien pour que, si on se conecte avec le Super-Admin, qui n'est pas dnas la BD, le site marche toujours #}
+    {% set id = "" %}{% if is_granted('ROLE_SUPER') %}{% else %}
+        {# Si ce n'est pas lui de co', alors on met l'id correctement et on affiche le profil #}
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}{% set id = app.user.id %}{% endif %}{% endif %}
+    <br><u><div id="titre">Profil de {{show.username}}</div></u>
+    {# Si l'utilisateur conecter est un Admin, alors il peux changer le rôle de l'utilisateur montré dasn se profil #}
+    {% if is_granted('ROLE_ADMIN') %} {{ form_start(form) }}
+        Rôle: {{ form_widget(form.role) }} <input type="submit" value="Changer" />{{ form_end(form) }}
+        {% else %}<br>
+    {% endif %}
+    <br><br>{# On montre tout les Locaux et Matériaux en ordre chronologique #}
+    <table style="width:69%"><tr><th><div id="stitre">Local réservé</div></th> <th><div id="stitre">Matériel réservé</div></th></tr>
+    <tr> <td valign="top">{% for lo in local%}
+        <li><strong>{{lo.local.num}}</strong> - Le <strong>{{lo.date|date('d-m-Y')}}</strong><br>
+            De <strong>{{debut[lo.perioded]}}</strong> à <strong>{{fin[lo.periodef]}}</strong>.
+            {% if is_granted('ROLE_ADMIN') or id == lo.user.id %}<br>
+                {% if lo.date|date('Y-m-d') > date()|date('Y-m-d') %}
+                    <a href="{{ path('supprimer', { 'supp': 'reservl', 'id': lo.id }) }}"
+                    onclick="return confirm('Attention, vous allez supprimer la réservation du local {{lo.local.num}}.' );">Supprimer</a>
+                {% endif %}
+        {% else %}<br>{% endif %}
+        </li>
+    {% endfor %}</td>
+    <td valign="top">{% for lo in materiel %}
+       <li><strong>{{lo.materiel.nom}}</strong> - Le <strong>{{lo.date|date('d-m-Y')}}</strong><br>
+           De <strong>{{debut[lo.perioded]}}</strong> à <strong>{{fin[lo.periodef]}}</strong>.
+           {% if is_granted('ROLE_ADMIN') or id == lo.user.id %}<br>
+                {% if lo.date|date('Y-m-d') > date()|date('Y-m-d') %}
+                    <a href="{{ path('supprimer', { 'supp': 'reservm', 'id': lo.id }) }}" 
+                    onclick="return confirm('Attention, vous allez supprimer la réservation d\'un {{lo.materiel.nom}}.' );">Supprimer</a>
+                {% endif %}
+        {% else %}<br>{% endif %}
+       </li>
+    {% endfor %}</td></tr></table>
+{% endblock %}
+
+    

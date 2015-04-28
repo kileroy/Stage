@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Matériaux{% endblock %}
+
+{% block content %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('ajoutm') }}">+ Ajouter</a>
+    {% endif %}
+    <br><div id="titre">Liste des Matériaux disponible à la réservation.</div>
+    <br><br>{# On montre ici tout les Locaux présent dans la BD #}
+    {% for lo in show%}{# Et les Admin on le pouvoir d'en ajouter #}
+        <li>¬ {{lo.nom}} {% if is_granted('ROLE_ADMIN') %} -
+              <a href="{{ path('supprimer', {'supp': 'materiel', 'id': lo.id}) }}"
+                       onclick="return confirm('Attention, vous allez supprimer le Matériel {{lo.nom}}.' );">Supprimer</a>
+        {% endif %}<br>{{lo.description}}</li>
+    {% endfor %}
+{% endblock %}

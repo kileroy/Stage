@@ -1,0 +1,9 @@
+{% block form_row %}
+{% spaceless %} {# Champs simple et typic pour un formulaire #}
+    <table id="form"><td><div class="form_row">
+        <td id="form">{{ form_label(form) }} : </td>
+        <td><strong><font color=darkred>{{ form_errors(form) }}</font></strong>
+        {{ form_widget(form) }}</td>
+    </div></td></table><br>
+{% endspaceless %}
+{% endblock form_row %}

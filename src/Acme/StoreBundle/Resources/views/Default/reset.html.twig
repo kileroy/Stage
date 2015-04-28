@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reset{% endblock %}
+{# Page qui sert a faire un Reste complet des tables de la BD, sans "Alert" encore #}
+{% block content %}
+    <h1>Attention, si vous cliquez sur un de ses boutons,<br> leur contenu sera entièrement supprimé!!</h1><br><br>
+    <div id="titre">Mettre à Zéro :</div> <br>
+        <a href="{{ path('drop', {'supp':'reservl'}) }}" 
+           onclick="return confirm('Attention, vous allez supprimer Toutes les réservation de Locaux.' );">les Réservations de Locaux</a><br>
+        <a href="{{ path('drop', {'supp':'reservm'}) }}"
+           onclick="return confirm('Attention, vous allez supprimer Toutes les réservation de Matériaux.' );">les Réservations de Matériaux</a><br><br>
+        <a href="{{ path('drop', {'supp':'local'}) }}"
+           onclick="return confirm('Attention, vous allez supprimer Touts les Locaux.' );">les Locaux</a><br>
+        <a href="{{ path('drop', {'supp':'materiel'}) }}"
+           onclick="return confirm('Attention, vous allez supprimer Touts les Matériaux.' );">les Matériaux</a><br><br>
+        <a href="{{ path('drop', {'supp':'user'}) }}"
+           onclick="return confirm('Attention, vous allez supprimer Touts les Utilisateurs.' );">les Utilisateurs</a><br><br>
+        <a href="{{ path('drop', {'supp':'all'}) }}"
+           onclick="return confirm('Attention, vous allez supprimer Tout!\nVous devrez Tout ré-entré les données!' );">Tout</a>
+{% endblock %}
