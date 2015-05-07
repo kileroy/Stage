@@ -12,6 +12,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class DefaultController extends Controller
 {
+    /*Fait juste afficher la Page d'aceuile transformer en F.A.Q.*/
+    public function indexAction()
+    {
+        return $this->render('AcmeStoreBundle:Default:index.html.twig');
+    }
     /*Affiche le forumulaire pour ajouté un Local
      * Parametre : $request est simplement la requête SQL envoyé
      * Retourne : Une redirection, soit vers la list des Locaux, soit un retour
@@ -407,10 +412,6 @@ class DefaultController extends Controller
      * Parametre : $imp est l'horraire qu'on veux imprimer, entre les Locaux et Matériaux, gérer par un Switch. Reçu par le URL
      * Retourne : La page avec l'horraire entier demander dans le $imp */
     public function impAction($imp){
-        
-        $materiel = $this->getDoctrine()
-            ->getRepository('AcmeStoreBundle:Materiels')
-            ->findAll();
         $hDe = [
         1 => "8:00h", 2 => "8:55h", 3 => "9:50h", 4 => "10:45h", 5 => "11:40h",
         6 => "12:35h", 7 => "13:30h", 8 => "14:25h", 9 => "15:20h", 10 => "16:15h"];
@@ -420,7 +421,7 @@ class DefaultController extends Controller
         
         $semEcol =$this->getDoctrine()
             ->getRepository('AcmeStoreBundle:Semaine')
-            ->findJour();
+            ->findAll();
         
         $mois=[
             1 => "Janvier", 2 => "Février", 3 => "Mars", 4 => "Avril", 5 => "Mai",

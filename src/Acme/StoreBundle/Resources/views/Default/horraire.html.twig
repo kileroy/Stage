@@ -7,7 +7,7 @@
     {#<br><br><br><br>#}
     <div id="titre">Semaine {{id}} du {{semaine[id].jour|date('d')}} {{mois[semaine[id].jour|date('n')]}}</div> <br><br>{#<br><br><br>#}
     <u><div id="stitre">Liste des Réservation pour les Locaux</div></u> 
-    <a href="{{ path('imprime', {'imp': 'local' ,'id': id}) }}">Version Imprimable</a><br>
+    <a href="{{ path('imprime', {'imp': 'local'}) }}">Version Imprimable</a><br>
     <table border="1">
         {# D'abord on met des varialbe vide. 
         Elles servent principalement a vérifié si un objet est un double ou non comme leur nom l'indique.
@@ -146,7 +146,7 @@
     </table>
             
     <br><br><u><div id="stitre">Liste des Réservation pour les Matériaux</div></u> 
-    <a href="{{ path('imprime', {'imp': 'materiel' ,'id': id}) }}">Version Imprimable</a><br>
+    <a href="{{ path('imprime', {'imp': 'materiel'}) }}">Version Imprimable</a><br>
     <table border="1">
         {%set double = 'nul'%}{%set doubleDate = 'nul'%}{%set mm = 0%}{%set nb = 0%}
         {%set nbf = 0%}{%set check =0%}{%set reserve = {(nb):double}%}

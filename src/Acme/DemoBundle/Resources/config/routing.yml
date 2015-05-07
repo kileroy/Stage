@@ -1,6 +1,6 @@
-_welcome:
-    path:     /
-    defaults: { _controller: AcmeDemoBundle:Welcome:index }
+#_welcome:
+ #   path:     /
+  #  defaults: { _controller: AcmeDemoBundle:Welcome:index }
 
 _demo_secured:
     resource: "@AcmeDemoBundle/Controller/SecuredController.php"

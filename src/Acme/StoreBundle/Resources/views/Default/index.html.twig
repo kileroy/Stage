@@ -1,5 +1,45 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-Inutile
+{% block titre %}Acceuil{% endblock %}
+
+{# block content_header '' #}
+
+{% block content %}
+    {% set version = constant('Symfony\\Component\\HttpKernel\\Kernel::MAJOR_VERSION') ~ '.' ~ constant('Symfony\\Component\\HttpKernel\\Kernel::MINOR_VERSION')%}
+    <br>
+    <div id="titre">F.A.Q.</div>
+
+    <p><div id="stitre">Comment réserver?</div></p>
+    En premier lieux, il faut être connecté sur le site en cliquant sur le bouton désignez à cette effet.<br>
+    Par la suite, vous devez cliquer sur les deux premier lien qui se trouve sous le logo utiliser pour le site, il y en a un pour les Locaux, et un pour les Matériaux.<br>
+    Il ne manque plus qu'à remplir les informations demandées et cliquez sur le bouton "Réserver" pour que votre réservation soit pris en compte.
+    <br>
+    <p><div id="stitre">Je suis connecté mais ne vois pas les lien, pourquoi?</div></p>
+    Simplement car vous n'avez pas lu l'avertissement à votre inscription, disant que vous devez attendre d'être validé par un administrateur avant.
+    {% if is_granted('ROLE_ADMIN') %}<br>
+    <p><div id="stitre">Comment changer l'autorisation d'un utilisateur?</div></p>
+    Simplement aller sur son profil et changer avec la liste déroulante sur l'autorisation souhaitée puis cliquer sur le bouton "changer".
+    <br>
+    <p><div id="stitre">Comment Supprimer un [...] ?</div></p>
+    Cliquez dans la liste de ce que vous souhaité supprimer puis cliquez sur le 'lien' "Supprimer" qui est à coté de ce que voulez supprimer.<br>
+    [Attention il n'y a pas d'avertissement]
+    <br>
+    <p><div id="stitre">Comment Ajouter un [...] ?</div></p>
+    Allez dans la liste de Locaux ou Matériaux de ce que vous voulez ajouté à la liste puis clique sur le 'lien' "+ Ajouter" qui se trouve en haut de "Liste des ...". <br>
+    Remplissez les informations demandées.
+    {% endif %}
+    {% if is_granted('ROLE_SUPER') %}<br>
+    <p><div id="stitre">La session à changer, comment modifié les semaines?</div></p>
+    En tant qu'Super-Admin’, vous avez un bouton, à la place de "Profil", qui est "Semaine d'école", c'est ici que vous pourrez changer les lundis de chaque semaine d'école. Vous pouvez les modifier en tout temps, et les site vous indiquera si la journée précisé n'est pas un lundi.<br>
+    <p><div id="stitre">Comment Supprimer tout une liste?</div></p>
+    Puisque vous êtes le Super-Admin’ de ce site, une option supplémentaire est disponible : Reset. Ici il est possible de nettoyer les liste complètement.<br>
+    Puis cliquer sur la liste que vous voulez supprimer.<br>
+    [Attention il n'y a pas d'avertissement et de retour en arrière]
+    {% endif %}
+    <br>
+    <p><div id="stitre">Comment Imprimer correctement?</div></p>
+        Allez dans le section "Horaire" du site et cliquer sur la version imprimable soit des Locaux ou des Matériaux. Vous devriez pouvoir imprimer correctement. 
+    Cependant, pour un meilleur rendu, demander à votre navigateur de vous montrer l'aperçu avant l'impression. Les tableaux pourraient être coupés à cause qu'ils sont trop gros pour une seul page. 
+    Vous pouvez éviter en grande partit cela ainsi qu'avoir un grand tableau complet par page en demandant a votre navigateur de ne pas mettre de marge d'impression.
+    <br>
 {% endblock %}

@@ -6,11 +6,11 @@
     <link rel="icon" href="http://www.federation-maginot.com/IMG/png_army-medical.png" />
     
     {# Pour commentaire, se référer a "Horraire.html.twig" #}
-    {% for id in 1..17 %}
+    {% for id in 0..16 %}
         {%set double = 'nul'%}{%set doubleDate = 'nul'%}{%set mm = 0%}{%set nb = 0%}{%set nbf = locaux|length%}{%set check =0%}
         {%set reserve = {(nb):double}%}
     <table border="1">
-        <tr><td>Semaine {{id}}</td>
+        <tr><td>Semaine {{id+1}}</td>
         {% for lo in locaux %} {#if lo.local.num != double and if lo.local.num != double
             lo.date|date('Y-m-d') >= semaine[id].jour|date('Y-m-d') and lo.date|date('Y-m-d') < semaine[id+1].jour|date('Y-m-d') #}
             {%set nb = nb +1%}
