@@ -48,8 +48,8 @@ listM:
     defaults:  { _controller: AcmeStoreBundle:Default:materiel}  
 #Url D'utilisateur
 user:
-    path:      /liste/user
-    defaults:  { _controller: AcmeStoreBundle:Default:user}  
+    path:      /liste/utilisateur
+    defaults:  { _controller: AcmeStoreBundle:Default:user }  
 profil:
     path:      /profil/{id}
     defaults:  { _controller: AcmeStoreBundle:Default:profil} 
