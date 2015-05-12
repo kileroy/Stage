@@ -77,5 +77,5 @@ semaine:
     path:      /semaine
     defaults:  { _controller: AcmeStoreBundle:Default:semaine} 
 changer:
-    path:      /semaine/{id}
+    path:      /semaine/edit
     defaults:  { _controller: AcmeStoreBundle:Default:changer} 

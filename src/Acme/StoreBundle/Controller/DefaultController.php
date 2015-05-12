@@ -7,11 +7,13 @@ use Acme\StoreBundle\Entity\Materiels;
 use Acme\StoreBundle\Entity\Local;
 use Acme\StoreBundle\Entity\ReserveL;
 use Acme\StoreBundle\Entity\ReserveM;
+use Acme\StoreBundle\Entity\Semaine;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class DefaultController extends Controller
 {
+    
     /*Fait juste afficher la Page d'aceuile transformer en F.A.Q.*/
     public function indexAction()
     {
@@ -284,7 +286,7 @@ class DefaultController extends Controller
           avec les réservation pour les afficher sous*/
         return $this->render('AcmeStoreBundle:Default:horraire.html.twig', array(
            'local' => $reserveL, 'materiel' => $reserveM, 'debut' => $hDe, 'fin' => $hA, 
-           'id' => $id, 'semaine' => $semEcol, "mois" => $mois , 'locaux' => $local,
+           'id' => $id-1, 'semaine' => $semEcol, "mois" => $mois , 'locaux' => $local,
            'materiaux' => $materiel,));
     }
     /* Supprime "x" avec le ID donner dans la table donné, marche avec un Switch addapté avec le URL.
@@ -463,50 +465,46 @@ class DefaultController extends Controller
         return $this->render('AcmeStoreBundle:Default:semaine.html.twig', array(
             'sem' => $semaine,));
     }
-    /* Affiche un mini "formulaire" avec seulement un 'date' pour pouvoir changer le lundi demander
+    /* Affiche un mini "formulaire" avec seulement un 'date' pour pouvoir changer le 
+     * premier lundi de la semaine d'école, se dernier changeant tout les autre automatiquement
      * Parametre : $request est la requete SQL
-     *             $id est le numéro de la Semaine selectionner à changer
      * Retourne : La page avec un 'date' pour changer la date du Lundi*/
-    public function changerAction(Request $request, $id){
+    public function changerAction(Request $request){
+        //$semaine = new Semaine();
         $semaine = $this->getDoctrine()
             ->getRepository('AcmeStoreBundle:Semaine')
-            ->find($id);
+            ->find(1);
+        //$toutSem = new Semaine();
+        $toutSem = $this->getDoctrine()
+            ->getRepository('AcmeStoreBundle:Semaine')
+            ->findAll();
         $err = "";
         
-        if ($semaine->getId() >= 18){
-            $form = $this->createFormBuilder($semaine)
+            $form = $this->createFormBuilder($toutSem[0])
             ->add('jour', 'date', array('widget' => 'single_text', 'input' => 'datetime',
             'attr' => array('class' => 'lundi'),))
             ->add('valider', 'submit')
             ->getForm();
-        }else{
-            $form = $this->createFormBuilder($semaine)
-            ->add('jour', 'date', array('widget' => 'single_text', 'input' => 'datetime',
-            'attr' => array('class' => 'lundi'),))
-            ->add('valider', 'submit')
-            ->add('validerEtProchain', 'submit')
-            ->getForm();
-        }
         
         $form->handleRequest($request);
         
         if ($form->isSubmitted()) {
             //Devrais être inutile, mais juste au cas ou la date ne serrait pas un lundi
-            if (date_format($semaine->getJour(),'N') !=1 )
+            if (date_format($toutSem[0]->getJour(),'N') !=1 )
                 $err = "Cette date n'est pas un Lundi.";
             else{
+                
             $em = $this->getDoctrine()->getManager();
+            /*Change tout les semaine de la BD à distance d'une semaine. 
+             *Comme ça on en modifi juste un et voilà*/
             $em->flush();
-            $nextAction = $form->get('validerEtProchain')->isClicked()
-                    ? 1
-                    : 0;
-            //Si c'est 1, ça veux dire qu'on a cliquer sur "Valider et Prochain" et on envois le prochain lundi a changer.
-            if ($nextAction == 1)
-            return $this->redirect($this->generateUrl('changer', array ('id' => $id+1)));
-            else
+            for ($i = 1 ; $i < count($toutSem) ; $i++){
+                $toutSem[$i]->next($toutSem[$i-1]->getJour());
+                $em->flush();
+            }
             return $this->redirect($this->generateUrl('semaine'));
             }
-        }    
+        }
         return $this->render('AcmeStoreBundle:Default:new.html.twig', array(
             'sem' => $semaine, 'form' => $form->createView(), 'err' => $err,));
     }

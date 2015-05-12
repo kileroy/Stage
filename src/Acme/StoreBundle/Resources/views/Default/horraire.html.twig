@@ -4,7 +4,7 @@
 {# Je souhaite bonne chance à mes "prédécéseur" pour décéler se remut-méninge de "if", 
    même moi je ne m'y retrouve plus vraiment... Mais ça marche. #}
 {% block content %}
-    {#<br><br><br><br>#}
+    
     <div id="titre">Semaine {{id}} du {{semaine[id].jour|date('d')}} {{mois[semaine[id].jour|date('n')]}}</div> <br><br>{#<br><br><br>#}
     <u><div id="stitre">Liste des Réservation pour les Locaux</div></u> 
     <a href="{{ path('imprime', {'imp': 'local'}) }}">Version Imprimable</a><br>
@@ -267,17 +267,17 @@
             {% if nb > 0  %}{%for nb in 1..nb%}<td></td>{% endfor %}{% endif %}{%set nb = nbf%}
         </tr>
     </table>
-            
+            {% set id = id +1 %}
     <center>
         {% if id-4 >= 1 %}<a href="{{ path('horraire', {'id': 1}) }}" title="Première Page"><<</a>-<a href="{{ path('horraire', {'id': id-1}) }}" title="Précédent"><</a>- ... , {% endif %}
         {% if id-3 >= 1 %}<a href="{{ path('horraire', {'id': id-3}) }}">{{id-3}}</a> ,{% endif %} 
         {% if id-2 >= 1 %}<a href="{{ path('horraire', {'id': id-2}) }}">{{id-2}}</a> ,{% endif %} 
         {% if id-1 >= 1 %}<a href="{{ path('horraire', {'id': id-1}) }}">{{id-1}}</a> ,{% endif %} 
         <strong>{{id}}</strong>
-        {% if id+1 <= 15 %}, <a href="{{ path('horraire', {'id': id+1}) }}">{{id+1}}</a>{% endif %} 
-        {% if id+2 <= 16 %}, <a href="{{ path('horraire', {'id': id+2}) }}">{{id+2}}</a>{% endif %}
-        {% if id+3 <= 17 %}, <a href="{{ path('horraire', {'id': id+3}) }}">{{id+3}}</a>{% endif %}
-        {% if id+4 <= 18 %}, ... -<a href="{{ path('horraire', {'id': id+1}) }}" title="Prochaine Page">></a>-<a href="{{ path('horraire', {'id': 18}) }}" title="Dernière Page">>></a>{% endif %}
+        {% if id+1 <= 19 %}, <a href="{{ path('horraire', {'id': id+1}) }}">{{id+1}}</a>{% endif %} 
+        {% if id+2 <= 19 %}, <a href="{{ path('horraire', {'id': id+2}) }}">{{id+2}}</a>{% endif %}
+        {% if id+3 <= 19 %}, <a href="{{ path('horraire', {'id': id+3}) }}">{{id+3}}</a>{% endif %}
+        {% if id+4 <= 19 %}{%set id = id - 1%}, ... -<a href="{{ path('horraire', {'id': id+2}) }}" title="Prochaine Page">></a>-<a href="{{ path('horraire', {'id': 19}) }}" title="Dernière Page">>></a>{% endif %}
     </center>
 {% endblock %}
 

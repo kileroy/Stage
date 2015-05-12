@@ -4,12 +4,15 @@
 
 {% block content %}
     <br><div id="titre">Lundi des semaines d'école</div>
-    <br><br>
-    {% for lo in sem%}
-        {# On montre les 18 semaines, par précaution des congé etc, 
-        pour que les Admin puisse les changer a chaque session #}
-        <li>¬ Semaine {{lo.id}} : {{lo.jour|date('d-m-Y')}} {% if is_granted('ROLE_ADMIN') %} -
-                    <a href="{{ path('changer', {'id': lo.id}) }}">Modifier</a><br>
-        {% endif %}</li>
+    <br>
+    {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('changer') }}">Modifier</a><br><br>
+        {% endif %}
+    {% for lo in sem if lo.id != 20%} 
+        {# On montre les 19 semaines, par précaution des congé etc, 
+        pour que les Admin puisse les changer a chaque session, avec une double sécurité 
+        Le != 20 est pour ne pas montré la dernière semaine qui est juste là pour les outofbound incontrolable #}
+        
+        <li>¬ Semaine {{lo.id}} : {{lo.jour|date('d-m-Y')}} </li>
     {% endfor %}
 {% endblock %}

@@ -57,4 +57,11 @@ class Semaine
     public function __toString(){
         return $jour;
     }
+    
+    //Prend une date en parametre puis lui ajoute une semaine
+    public function next($date){
+        //$date = $this->getJour();
+        $date->modify("+1 week");
+        $this->setJour($date);
+    }
 }
