@@ -98,6 +98,7 @@ class DefaultController extends Controller
             'class' => 'AcmeStoreBundle:Local',
             'property' => 'num', 'label'  => 'Local '))
             ->add('Reserver', 'submit')
+            ->add('ReserverUnNouveau', 'submit', array('label'  => 'Reserver à nouveau'))
             ->getForm();
         
         $form->handleRequest($request);
@@ -121,7 +122,12 @@ class DefaultController extends Controller
                 $em = $this->getDoctrine()->getManager();
                         $em->persist($reserve);
                         $em->flush();
-                return $this->redirect($this->generateUrl('profil', array('id'=>$user->getId(),) ));
+                $nextAction = $form->get('ReserverUnNouveau')->isClicked()
+                ? 0 : 1;
+                if($nextAction == 0 ){
+                    return $this->redirect($this->generateUrl('reservL'));
+                }else
+                    return $this->redirect($this->generateUrl('profil', array('id'=>$user->getId(),) ));
             }
         }
         
@@ -150,6 +156,7 @@ class DefaultController extends Controller
             'class' => 'AcmeStoreBundle:Materiels',
             'property' => 'nom',))
             ->add('Reserver', 'submit')
+            ->add('ReserverUnNouveau', 'submit', array('label'  => 'Reserver à nouveau'))
             ->getForm();
         
         $form->handleRequest($request);
@@ -171,7 +178,12 @@ class DefaultController extends Controller
                 $em = $this->getDoctrine()->getManager();
                         $em->persist($reserve);
                         $em->flush();
-                return $this->redirect($this->generateUrl('profil', array('id'=>$user->getId(),) ));
+                $nextAction = $form->get('ReserverUnNouveau')->isClicked()
+                ? 0 : 1;
+                if($nextAction == 0 ){
+                    return $this->redirect($this->generateUrl('reservM'));
+                }else
+                    return $this->redirect($this->generateUrl('profil', array('id'=>$user->getId(),) ));
             }
         }
         return $this->render('AcmeStoreBundle:Default:new.html.twig', array(
