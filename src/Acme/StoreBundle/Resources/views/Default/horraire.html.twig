@@ -5,7 +5,7 @@
    même moi je ne m'y retrouve plus vraiment... Mais ça marche. #}
 {% block content %}
     
-    <div id="titre">Semaine {{id}} du {{semaine[id].jour|date('d')}} {{mois[semaine[id].jour|date('n')]}}</div> <br><br>{#<br><br><br>#}
+    <div id="titre">Semaine {{id+1}} du {{semaine[id].jour|date('d')}} {{mois[semaine[id].jour|date('n')]}}</div> <br><br>{#<br><br><br>#}
     <u><div id="stitre">Liste des Réservation pour les Locaux</div></u> 
     <a href="{{ path('imprime', {'imp': 'local'}) }}">Version Imprimable</a><br>
     <table border="1">
